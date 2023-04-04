@@ -1,0 +1,66 @@
+import copy
+
+def getBlankSpaces(state):
+    for i in range(3):
+        for j in range(3):
+            if state [i][j] == 0:
+                return (i,j)
+            
+def getNextMove(state):
+    blank = getBlankSpaces(state)
+    next_state = []
+
+    if blank[1] > 0:
+        new_state = copy.deepcopy(state)
+        new_state[blank[0]][blank[1]] = new_state[blank[0]][blank[1]-1]
+        new_state[blank[0]][blank[1]-1] = 0
+        next_state.append(new_state)
+
+    if blank[1] < 2:
+        new_state = copy.deepcopy(state)
+        new_state[blank[0]][blank[1]] = new_state[blank[0]][blank[1]+1]
+        new_state[blank[0]][blank[1]+1] = 0
+        next_state.append(new_state)
+
+    if blank[0] > 0:
+        new_state = copy.deepcopy(state)
+        new_state[blank[0]][blank[1]] = new_state[blank[0]-1][blank[1]]
+        new_state[blank[0]-1][blank[1]] = 0
+        next_state.append(new_state)
+
+    if blank[0] < 2:
+        new_state = copy.deepcopy(state)
+        new_state[blank[0]][blank[1]] = new_state[blank[0]+1][blank[1]]
+        new_state[blank[0]+1][blank[1]] = 0
+        next_state.append(new_state)
+
+    return next_state
+
+def eightPuzzleDFS(initial, final):
+    closed = []
+    open = []
+    open.append((initial, []))
+
+    while open:
+        state, path = open.pop()
+        if state == final:
+            return path
+        elif str(state) not in closed:
+            closed.append(str(state))
+            for next_state in reversed(getNextMove(state)):
+                if next_state is not None:
+                    open.append((next_state, path + [next_state]))
+
+    return None
+    
+if __name__ == '__main__':
+
+    initial= [[2, 0, 3], [1, 8, 4], [7, 6, 5]]
+    final = [[1, 2, 3], [8, 0, 4], [7, 6, 5]]
+
+    result = eightPuzzleDFS(initial, final)
+
+    for state in result:
+        for i in state:
+            print(i)
+        print('\n\n')
